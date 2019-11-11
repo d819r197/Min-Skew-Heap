@@ -60,10 +60,97 @@ Node* MinSkewHeap::Merge(Node* h1, Node* h2) {
     return(RecMerge(h2, h1));
 }
 
-bool MinSkewHeap::Delete(int value, Node* root) {
-  // Node * tempNode = treeRoot;
-  // treeRoot = Merge(tempNode->getLeftChild(), tempNode->getRightChild());
-  // delete(tempNode);
+bool MinSkewHeap::Delete(int value, Node* child, Node* parent) {
+  //Value Found - Base Case
+  if(child != nullptr) {
+      if(child->getKey() == value) {
+        Node * tempNode = treeRoot;
+        treeRoot = Merge(tempNode->getLeftChild(), tempNode->getRightChild());
+        delete(tempNode);
+
+        bool isRightChild = false;
+        Node* leftC = parent->getLeftChild();
+        Node* rightC = parent->getRightChild();
+
+        //Find out which child has value
+        //Parent Node has both children
+        if(leftC != nullptr && rightC != nullptr) {
+          if(leftC->getKey() == value) {
+            isRightChild = false;
+          }
+          else if(rightC->getKey() == value) {
+            isRightChild = true;
+          }
+          else {
+            std::cout <<"Error: Both children do not contain searched value as their key.\n";
+          }
+        }
+        //Use Right Child
+        else if(leftC == nullptr) {
+          isRightChild = true;
+        }
+        //Use Left Child
+        else if (rightC == nullptr) {
+          isRightChild = false;
+        }
+        //Should never happen
+        else {
+          std::cout <<"Error: Delete called on parent with no children\n";
+        }
+
+        //Start replacing nodes and deleting found value
+        if(isRightChild) {
+          Node * tempChildNode = parent->getRightChild();
+          Node * tempChildLeftNode = tempChildNode -> getLeftChild();
+          Node * tempChildRightNode = tempChildNode -> getRightChild();
+          Node * mergedChildren = nullptr;
+
+          //Set Parent Child to null
+          parent->setRightChild(nullptr);
+
+          //Merge the two children of the node being deleted
+          mergedChildren = Merge(tempChildLeftNode, tempChildRightNode);
+
+          //Delete the child node of Parent
+          delete child;
+
+          //Merge Parent with merged children
+          treeRoot = Merge(treeRoot, mergedChildren);
+      }
+      else {
+        Node * tempChildNode = parent->getLeftChild();
+        Node * tempChildLeftNode = tempChildNode -> getLeftChild();
+        Node * tempChildRightNode = tempChildNode -> getRightChild();
+        Node * mergedChildren = nullptr;
+
+        //Set Parent Child to null
+        parent->setLeftChild(nullptr);
+
+        //Merge the two children of the node being deleted
+        mergedChildren = Merge(tempChildLeftNode, tempChildRightNode);
+
+        //Delete the child node of Parent
+        delete child;
+
+        //Merge Parent with merged children
+        treeRoot = Merge(treeRoot, mergedChildren);
+      }
+      return(true);
+    }
+  }
+
+  //Root has left child
+  if(Delete(value, child->getLeftChild(), child)) {
+    return(true);
+  }
+  //Root has right child
+  else if(Delete(value, child->getRightChild(), child)) {
+    return(true);
+  }
+  //Root has no children
+  else {
+    return(false);
+  }
 }
 
 

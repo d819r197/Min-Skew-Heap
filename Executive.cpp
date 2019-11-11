@@ -37,7 +37,7 @@ void Executive::run() {
   bool quit = false;
   while(!quit) {
     switch (menuInput()) {
-      //Insert - TODO
+      //Insert - Complete
       case 1: {
         int input;
         std::cout << "Please enter the value which you want to enter into the Min-Left Heap: ";
@@ -53,15 +53,24 @@ void Executive::run() {
 
         break;
       }
-      //Delete - TODO
+      //Delete - Complete
       case 3: {
         std::cout << "Output: ";
         if(msHeap->isEmpty()) {
           std::cout << "Empty tree, no element to delete\n.";
         }
         else {
-          // msHeap->Delete();
-          // std::cout <<"Min element has been removed from the tree.\n";
+          int input;
+          std::cout << "Select a number to be deleted from the Skew-Heap: ";
+          std::cin >> input;
+          std::cout << std::endl;
+
+          if(msHeap->Delete(input, msHeap->GetTree_Root(), msHeap->GetTree_Root())) {
+            std::cout <<"Element: " <<input <<" was removed from the Skew-Heap.\n";
+          }
+          else {
+            std::cout <<"Element: " <<input <<" was not removed from the Skew-Heap.\n";
+          }
         }
         break;
       }

@@ -15,7 +15,7 @@ class MinSkewHeap {
 
     void Insert(int key);
 
-    bool Delete(int value, Node* root);
+    bool Delete(int value, Node* child, Node* parent);
     bool Find(int value, Node* root);
 
     Node* RecMerge(Node* h1, Node* h2);
