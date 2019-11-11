@@ -36,12 +36,12 @@ Node* MinSkewHeap::RecMerge(Node* h1, Node* h2) {
   }
   else {
     h1->setRightChild(Merge(h1->getRightChild(), h2));
-    if ((h1->getLeftChild())->getRank() < (h1->getRightChild())->getRank()) {
+    // if ((h1->getLeftChild())->getRank() < (h1->getRightChild())->getRank()) {
       Node * temp = h1->getLeftChild();
       h1->setLeftChild(h1->getRightChild());
       h1->setRightChild(temp);
-    }
-    h1->ComputeRank();
+    // }
+    // h1->ComputeRank();
     }
   return(h1);
 }
