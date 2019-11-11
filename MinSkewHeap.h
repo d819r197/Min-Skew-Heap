@@ -40,6 +40,9 @@ class MinSkewHeap {
     void DecTree_Height() { treeHeight--; }
     int GetTree_Height() { return treeHeight; }
 
+    int RecCalculateTree_Height(int level, Node* root);
+    void CalculateTree_Height();
+
     Node* GetTree_Root() { return treeRoot; }
 
     bool isEmpty() { if(treeRoot == nullptr){ return(true); } return(false); }

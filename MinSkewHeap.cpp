@@ -8,9 +8,6 @@ MinSkewHeap::MinSkewHeap() {
   treeRoot = nullptr;
   treeSize = 0;
   treeHeight = 0;
-
-  nodesInLevel = 0;
-  maxNodesInLevel = 1;
 }
 
 //Class Methods
@@ -19,15 +16,14 @@ void MinSkewHeap::Build(){
 }
 
 void MinSkewHeap::Insert(int key) {
+  int oldHeight = treeHeight;
+
   treeSize++;
-  nodesInLevel++;
-  if(nodesInLevel == maxNodesInLevel) {
-    treeHeight++;
-    maxNodesInLevel = maxNodesInLevel*2;
-    nodesInLevel = 0;
-    std::cout <<"incrementing tree height. Current height: " <<treeHeight <<std::endl;
-  }
   treeRoot = Merge(new Node(key), treeRoot);
+  CalculateTree_Height();
+  if(!(oldHeight == treeHeight) && oldHeight < treeHeight) {
+    std::cout <<"Tree height was incremented to: " <<treeHeight <<std::endl;
+  }
 }
 
 Node* MinSkewHeap::RecMerge(Node* h1, Node* h2) {
@@ -226,19 +222,58 @@ void MinSkewHeap::RecPrintInorder(Node* root) {
 
 void MinSkewHeap::RecPrintLevelorder(Node* root, int level) {
   if(!isEmpty()) {
-    if(treeHeight == 1) {
+    // std::cout << "RecLO, level " <<level <<": ";
+
+    if(level == 1) {
       std::cout <<root->getKey() <<", ";
     }
     else {
       level--;
-      RecPrintLevelorder(root->getLeftChild(), level);
-      RecPrintLevelorder(root->getRightChild(), level);
+      if(root->getLeftChild() != nullptr) {
+        RecPrintLevelorder(root->getLeftChild(), level);
+      }
+      if(root->getRightChild() != nullptr) {
+        RecPrintLevelorder(root->getRightChild(), level);
+      }
     }
   }
 }
 
 void MinSkewHeap::Levelorder() {
-  for(int lcv = 1; lcv < treeHeight; lcv++) {
+
+  for(int lcv = 1; lcv <= treeHeight; lcv++) {
     RecPrintLevelorder(treeRoot, lcv);
   }
+}
+
+int MinSkewHeap::RecCalculateTree_Height(int level, Node* root) {
+  if(root != nullptr) {
+    if(root->getLeftChild() == nullptr && root->getRightChild() == nullptr) {
+      return(level);
+    }
+    // std::cout <<"Increasing level: " <<level <<" to: " <<level+1 <<std::endl;
+    level++;
+    //Return right child length
+    if(root->getLeftChild() == nullptr) {
+      return(RecCalculateTree_Height(level, root->getRightChild()));
+    }
+    //Return left childs lenght
+    else if(root->getRightChild() == nullptr) {
+      return(RecCalculateTree_Height(level, root->getLeftChild()));
+    }
+    //Compare both childs lengths
+    else if(RecCalculateTree_Height(level, root->getLeftChild()) > RecCalculateTree_Height(level, root->getRightChild())) {
+      return(RecCalculateTree_Height(level, root->getLeftChild()));
+    }
+    else if(RecCalculateTree_Height(level, root->getLeftChild()) <= RecCalculateTree_Height(level, root->getRightChild())) {
+      return(RecCalculateTree_Height(level, root->getLeftChild()));
+    }
+    else {
+      std::cout << "ERROR: RecCalculateTree_Height entered non intended section of recursive definition.\n";
+    }
+  }
+}
+
+void MinSkewHeap::CalculateTree_Height() {
+  treeHeight = RecCalculateTree_Height(1, treeRoot);
 }
